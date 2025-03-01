@@ -1,0 +1,10 @@
+[package]
+name = "datablaze_engine"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "datablaze_engine_lib"
+
+[dependencies]
+datablaze_types = { path = "../DatablazeTypes" }

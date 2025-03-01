@@ -1,0 +1,13 @@
+[package]
+name = "datablaze_integration_tests"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+datablaze_engine = { path = "../DatablazeEngine" }
+datablaze_sdk = { path = "../DatablazeSdk" }
+datablaze_types = { path = "../DatablazeTypes" }
+serial_test = "3.2.0"
+
+[lib]
+name = "datablaze_integration_tests"
