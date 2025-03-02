@@ -7,4 +7,5 @@ edition = "2024"
 name = "datablaze_types"
 
 [dependencies]
+strum = "0.27.1"
 strum_macros = "0.27.1"

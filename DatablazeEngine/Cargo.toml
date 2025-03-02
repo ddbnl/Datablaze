@@ -3,8 +3,12 @@ name = "datablaze_engine"
 version = "0.1.0"
 edition = "2024"
 
-[lib]
-name = "datablaze_engine_lib"
-
 [dependencies]
 datablaze_types = { path = "../DatablazeTypes" }
+axum = "0.8.1"
+axum-macros = "0.5.0"
+tokio = { version = "1.43.0", features = ["rt-multi-thread"] }
+serde = { version = "1.0.218", features = ["derive"] }
+serde_json = "1.0.139"
+tower = "0.5.2"
+log = "0.4.26"

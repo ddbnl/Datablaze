@@ -1,4 +1,5 @@
-﻿use crate::datastore::datastore::Datastore;
+﻿use datablaze_types::enums::DatastoreVariants;
+use crate::datastore::datastore::Datastore;
 
 pub struct InMemoryDatastore {
     
@@ -23,5 +24,8 @@ impl Datastore for InMemoryDatastore {
 
     fn select(&self) {
         todo!()
+    }
+    fn get_type(&self) -> DatastoreVariants {
+        DatastoreVariants::InMemory
     }
 }

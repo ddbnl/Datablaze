@@ -1,4 +1,4 @@
-﻿
+﻿use datablaze_types::enums::DatastoreVariants;
 
 pub trait Datastore {
     fn insert(&mut self);
@@ -6,4 +6,5 @@ pub trait Datastore {
     fn create(&mut self);
     fn update(&mut self);
     fn select(&self);
+    fn get_type(&self) -> DatastoreVariants;
 }

@@ -1,14 +1,19 @@
-use crate::network::server::Server;
 pub use datablaze_types::enums::*;
 
-mod commands;
 mod datastore;
 mod network;
-mod parser;
 mod database;
+mod tests;
 
-fn main() {
-    let mut server = Server::default();
-    server.run_server();
+use network::route::create_router;
 
+
+#[tokio::main]
+async fn main() {
+
+    let app = create_router();
+
+    println!("🚀 Server started successfully");
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:8000").await.unwrap();
+    axum::serve(listener, app).await.unwrap();
 }
