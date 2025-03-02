@@ -3,6 +3,7 @@ use axum::{
     routing::{get, post},
     Router,
 };
+use axum::routing::{delete, patch};
 use tokio::sync::Mutex;
 use crate::network::{
     model::Server,
@@ -22,5 +23,7 @@ pub fn create_router() -> Router {
         .route("/api/database/{database_name}/table", get(table_get_handler))
         .route("/api/database/{database_name}/table/{table_name}/row", post(row_create_handler))
         .route("/api/database/{database_name}/table/{table_name}/row", get(row_get_handler))
+        .route("/api/database/{database_name}/table/{table_name}/row", patch(row_update_handler))
+        .route("/api/database/{database_name}/table/{table_name}/row", delete(row_delete_handler))
         .with_state(state)
 }

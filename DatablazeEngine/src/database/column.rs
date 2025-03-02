@@ -20,11 +20,4 @@ impl Column {
         self.data.push(data);
         Ok(self.data.len() - 1)
     }
-    
-    pub fn get_data(&mut self, index: usize) -> Result<&ColumnData, IndexError> {
-        if index >= self.data.len() {
-            return Err(IndexError);
-        }
-        Ok(self.data.get(index).unwrap())
-    }
 }

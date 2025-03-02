@@ -8,14 +8,14 @@ use axum::{
 };
 use axum::extract::Path;
 use axum_macros::debug_handler;
-use datablaze_types::enums::{ColumnData, ColumnTypes, DatastoreVariants};
+use datablaze_types::enums::{ColumnTypes, DatastoreVariants};
 use crate::database::column::Column;
 use crate::database::database::Database;
 use crate::database::table::Table;
 use crate::network::{
     model::{ServerState},
 };
-use crate::network::model::{ColumnResponseModel, DatabaseCreateRequestModel, DatabaseGetQueryModel, DatabaseResponseModel, RowCreateRequestModel, RowGetQueryModel, TableCreateRequestModel, TableGetQueryModel, TableResponseModel};
+use crate::network::model::{ColumnResponseModel, DatabaseCreateRequestModel, DatabaseGetQueryModel, DatabaseResponseModel, RowCreateRequestModel, RowGetQueryModel, RowUpdateRequestModel, TableCreateRequestModel, TableGetQueryModel, TableResponseModel};
 
 pub async fn health_checker_handler() -> impl IntoResponse {
     StatusCode::OK
@@ -122,26 +122,60 @@ pub async fn row_create_handler(
 ) -> impl IntoResponse {
 
     let mut state = db.lock().await;
-
-    let maybe_database = state
-        .databases
-        .iter_mut()
-        .find(|db| db.name == database_name);
-    let database = match maybe_database {
-        Some(db) => {db}
-        None => {return StatusCode::NOT_FOUND}
-    };
     
     let maybe_database = state.databases.iter_mut().find(|db| db.name == database_name);
     if let Some(database) = maybe_database {
         let maybe_table = database.tables.iter_mut().find(|table| table.name == table_name);
         if let Some(table) = maybe_table {
-            if let Err(e) = table.add_row(body.data) {
-                return StatusCode::BAD_REQUEST;
+            for row in body.data.into_iter() {
+                if let Err(e) = table.add_row(row) {
+                    return StatusCode::BAD_REQUEST;
+                }
             }
         }
     }
     StatusCode::CREATED
+}
+
+pub async fn row_update_handler(
+    Path((database_name, table_name)): Path<(String, String)>,
+    opts: Query<RowGetQueryModel>,
+    State(db): State<ServerState>,
+    Json(body): Json<RowUpdateRequestModel>,
+) -> impl IntoResponse {
+
+    let mut state = db.lock().await;
+
+    let maybe_database = state.databases.iter_mut().find(|db| db.name == database_name);
+    if let Some(database) = maybe_database {
+        let maybe_table = database.tables.iter_mut().find(|table| table.name == table_name);
+        if let Some(table) = maybe_table {
+            if let Err(e) = table.update_row(body.data, opts.index) {
+                return StatusCode::BAD_REQUEST;
+            }
+        }
+    }
+    StatusCode::ACCEPTED
+}
+
+pub async fn row_delete_handler(
+    Path((database_name, table_name)): Path<(String, String)>,
+    opts: Query<RowGetQueryModel>,
+    State(db): State<ServerState>,
+) -> impl IntoResponse {
+
+    let mut state = db.lock().await;
+
+    let maybe_database = state.databases.iter_mut().find(|db| db.name == database_name);
+    if let Some(database) = maybe_database {
+        let maybe_table = database.tables.iter_mut().find(|table| table.name == table_name);
+        if let Some(table) = maybe_table {
+            if let Err(e) = table.delete_row(opts.index) {
+                return StatusCode::BAD_REQUEST;
+            }
+        }
+    }
+    StatusCode::ACCEPTED
 }
 
 #[debug_handler]

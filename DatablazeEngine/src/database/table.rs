@@ -20,7 +20,6 @@ impl Table {
             if row >= column.data.len() as u64 { return Err(DataError) };
             let data = match column.column_type {
                 ColumnTypes::String => {
-                    println!("wut?: {:#?}", column.data);
                     if let ColumnData::String(data) = &column.data[row as usize] {
                         Value::String(data.to_string())
                     } else {
@@ -28,14 +27,13 @@ impl Table {
                     }
                 }
                 ColumnTypes::Int => {
-                    if let (ColumnData::Int(number)) = column.data[row as usize] {
+                    if let ColumnData::Int(number) = column.data[row as usize] {
                         Value::Number(number.into())
                     } else {
                         return Err(DataError)
                     }
                 }
             };
-            println!("heh?: {:#?}", data);
             result.insert(column_name.to_string(), data);
         }
         Ok(result)
@@ -52,6 +50,29 @@ impl Table {
             } else {
                 return Err(DataError);
             }
+        }
+        Ok(())
+    }
+
+    pub fn update_row(&mut self, row: HashMap<String, Value>, index: u64) -> Result<(), DataError> {
+
+        if row.len() != self.columns.len() { return Err(DataError) };
+        for (column_name, column_data) in row {
+            let column = self.columns.get_mut(&column_name);
+            if let Some(column) = column {
+                let converted_data = convert_data(&column.column_type, column_data)?;
+                column.data[index as usize] = converted_data;
+            } else {
+                return Err(DataError);
+            }
+        }
+        Ok(())
+    }
+
+    pub fn delete_row(&mut self, index: u64) -> Result<(), DataError> {
+        for column in self.columns.values_mut() {
+            if index >= column.data.len() as u64 { return Err(DataError) };
+            column.data.remove(index as usize);
         }
         Ok(())
     }

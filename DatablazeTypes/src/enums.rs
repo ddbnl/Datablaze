@@ -30,14 +30,3 @@ impl ColumnData {
         }
     }
 }
-impl From<String> for ColumnData {
-    fn from(data: String) -> Self {
-        ColumnData::String(data)
-    }
-}
-
-impl From<u64> for ColumnData {
-    fn from(data: u64) -> Self {
-        ColumnData::Int(data)
-    }
-}

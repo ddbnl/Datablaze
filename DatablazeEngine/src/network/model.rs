@@ -60,6 +60,11 @@ pub struct ColumnResponseModel {
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct RowCreateRequestModel {
+    pub data: Vec<HashMap<String, Value>>
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct RowUpdateRequestModel {
     pub data: HashMap<String, Value>
 }
 
